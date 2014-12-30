@@ -27,7 +27,7 @@ def call(userPhNum):
     #parses the json and sends to database and user's phone
 
     client = TwilioRestClient(account_sid, auth_token)
-    message = client.calls.create(to=userPhNum, from=twilio_num, 
+    message = client.calls.create(to=userPhNum, from_=twilio_num, 
         url="http://twimlets.com/holdmusic?Bucket=com.twilio.music.ambient")      
 
 #this initializes the 2 factor process once company validates 1st auth 
