@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask import render_template
 from twilio.rest import TwilioRestClient
 
@@ -9,19 +9,29 @@ app = Flask(__name__)
 def index():
     return 'Index!'
 
+def sendsms():
+    account_sid = "AC2503925359b3b37abbeaaff6d87621f9"
+    auth_token = "44363a15bca971ddba81edd23cd56ee9"
+    client = TwilioRestClient(account_sid, auth_token)
+    message = client.messages.create(to="+19736504192", from_="+18622775096", body="twofass")
+
+
 #this initializes the 2 factor process once company validates 1st auth 
 @app.route('/init', methods=['POST', 'GET'])
 def template():
     #need to get phone number and Company token and userID
     #phone number, company token will be received as json
     #parses the json and sends to database and user's phone
+    json = request.json
+    print(json)
 
-    account_sid = "AC2503925359b3b37abbeaaff6d87621f9"
-    auth_token = "44363a15bca971ddba81edd23cd56ee9"
-    client = TwilioRestClient(account_sid, auth_token)
-    message = client.messages.create(to="+19736504192", from_="+18622775096", body="twofass")
-    return ("clientID: client  <br> phoneNumber: 123-456-7890 <br> companyToken: dshnvu9498hjs")
     
+    #sendsms()
+    #sendToDB()
+    #display 2nd fact input page
+
+    return jsonify(json)
+
 
 @app.route('/admin')
 def admin():
