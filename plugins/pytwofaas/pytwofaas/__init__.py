@@ -8,22 +8,22 @@ class PyTwoFaas():
     self.cToken = companyToken
     print self.cToken
 
+  def sendAuth(self, clientId, factor, authType):
+    if authType is not "email":
+      payload = { 'userID' : clientId, 'compTK': self.cToken, 'userNum': factor }
+    else:
+      payload = { 'userID' : clientId, 'compTK': self.cToken, 'userEmail': factor }
+    r = requests.post(self.url + "/init/" + authType, data=payload)
+    print(r.text)
+
   def sendAuthSMS(self, clientId, phoneNum):
-    payload = { 'userID' : clientId, 'compTK': self.cToken, 'userNum': phoneNum }
-    r = requests.post(self.url + "/init/sms", data=payload)
-    print(r.text)
+    self.sendAuth(clientId, phoneNum, "sms")
 
-def sendAuthCall(self, cliendId, phoneNum):
-    payload = { 'userID' : clientId, 'compTK': self.cToken, 'userNum': phoneNum }
-    r = requests.post(self.url + "/init/call", data=payload)
-    print(r.text)
+  def sendAuthCall(self, clientId, phoneNum):
+    self.sendAuth(clientId, phoneNum, "call")
 
-
-  def sendAuthEmail(self, cliendId, email):
-    payload = { 'userID' : clientId, 'compTK': self.cToken, 'userEmail': email }
-    r = requests.post(self.url + "/init/email", data=payload)
-    print(r.text)
-
+  def sendAuthEmail(self, clientId, email):
+    self.sendAuth(clientId, phoneNum, "email")
 
   def sendUserInput(self, clientId, code):
     payload = {'userID' :clientId,'compTK':self.cToken,'twoAuth':code}

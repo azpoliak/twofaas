@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='pytwofaas',
-      version='0.11',
+      version='0.13',
       description='Two Factor Authentication in Two Seconds',
       url='https://github.com/azpoliak/twofaas',
       author='Gil Chen-Zion',

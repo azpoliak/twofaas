@@ -4,7 +4,7 @@ import random
 import hashlib
 from twilio.rest import TwilioRestClient
 from pytwofaas import PyTwoFaas
-#import pymssql
+import pymssql
 import sendgrid
 
 account_sid = "AC2503925359b3b37abbeaaff6d87621f9"
@@ -23,6 +23,7 @@ def index():
     return 'Index!'
 
 def sendsms(userPhNum, message):
+    print "It gets here"
     client = TwilioRestClient(account_sid, auth_token)
     message = client.messages.create(to=userPhNum, from_=twilio_num, 
     body="Your authentication key is " + message)
@@ -33,15 +34,15 @@ def sendToDB(compTK, userID, userNum, auth_key):
     engine.autocommit(True)
     cursor = engine.cursor()
     ##insert query 
-    query = "INSERT INTO Users (KeyId, PhoneNum, Code, CompanyUserId) VALUES (%s, %s, %s, %s)" % (3, "4", "120912", "4")
+    query = "INSERT INTO Users (CompanyId, PhoneNum, Code, CompanyUserId) VALUES ('%s', '%s', '%s', '%s')" % (compTK, userNum, auth_key, userID)
     ##select query
     cursor.execute(query)
-    print cursor.rowcount
+    success = cursor.rowcount
     cursor.close()
     engine.close()
-    return "auth_key: " + auth_key + "\n phone number: " + userNum 
 
-#sendToDB(3, "4", "120912", "4")
+    return success
+    
 
 def call(userPhNum):
     #need to get phone number and Company token and userID
@@ -66,8 +67,8 @@ def send_email(user_add, auth_key):
 
 #this initializes the 2 factor process once company validates 1st auth
 
-@app.route('/init', methods=['POST', 'GET'])
-def init():
+@app.route('/init/<factor>', methods=['POST', 'GET'])
+def init(factor=None):
     #need to get phone number and Company token and userID
     #phone number, company token will be received as json
     #parses the json and sends to database and user's phone
@@ -78,19 +79,22 @@ def init():
     userNum = request.form['userNum']
 
     auth_key = rand()
-    send_email('thepezman@gmail.com', auth_key)
-    #sendsms(userNum, auth_key)
-    #call(userNum, auth_key)
-    return sendToDB(compTK, userID, userNum, auth_key)
-    #display 2nd fact input page
+   
+    success = sendToDB(compTK, userID, userNum, auth_key)
 
-    #return jsonify(request)
+    if success is 1:
+        if factor == "sms":
+            return sendsms(userNum, auth_key)
+        elif factor == "call":
+            return call(userNum)
+
 
 @app.route('/validate', methods=['POST'])
 def val():
     #gets the user id, phone number, and code and compares that to db
     userID = request.form['userID']
     userNum = request.form['userNum']
+    inputCode = request.form['inputCode']
     print "userID: " + userID + "\n number: " + userNum
     return "userID: " + userID + "\n number: " + userNum
 
