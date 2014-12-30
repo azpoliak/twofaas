@@ -7,13 +7,13 @@ app = Flask(__name__)
 def index():
     return 'Index!'
 
-@app.route('/template', methods=['POST', 'GET'])
+#this initializes the 2 factor process once company validates 1st auth 
+@app.route('/init', methods=['POST'])
 def template():
-    #need to get phone number, companyID. and Company token
-    if(request.method == 'POST'):
-        return ("clientID: " + request.form['email'] + "<br> phoneNumber: 123-456-7890 <br> companyToken: dshnvu9498hjs")
-        
-    return render_template('layout.html')
+    #need to get phone number and Company token and userID
+    #phone number, company token will be received as json
+    return ("clientID: client  <br> phoneNumber: 123-456-7890 <br> companyToken: dshnvu9498hjs")
+    
 
 @app.route('/admin')
 def admin():
