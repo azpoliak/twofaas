@@ -1,6 +1,6 @@
 import requests
 
-def init(clientId, phoneNumber, companyToken):
-    
+def init():
+    print "WOOT WOOT"
 
-def validate(clientId, code, companyToken):
+# def validate(clientId, code, companyToken):
