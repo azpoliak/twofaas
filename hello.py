@@ -7,6 +7,17 @@ app = Flask(__name__)
 def index():
     return 'Index!'
 
+@app.route('/firstlogInDone')
+def auth():
+    #gets phone number, and the auth token set my sys admin and sends code to user. 
+    #write the user code, phone number, and user id to db 
+    return 'Authorize'
+
+@app.route('/validate')
+def val():
+    #gets the user id, phone number, and code and compares that to db
+    return 'Validate'
+
 @app.route('/login')
 def log_in():
     return app.send_static_file('login.html')
