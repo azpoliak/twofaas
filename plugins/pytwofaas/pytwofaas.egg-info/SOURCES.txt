@@ -1,0 +1,8 @@
+setup.py
+pytwofaas/__init__.py
+pytwofaas.egg-info/PKG-INFO
+pytwofaas.egg-info/SOURCES.txt
+pytwofaas.egg-info/dependency_links.txt
+pytwofaas.egg-info/not-zip-safe
+pytwofaas.egg-info/requires.txt
+pytwofaas.egg-info/top_level.txt
