@@ -9,8 +9,9 @@ def index():
 
 @app.route('/template', methods=['POST', 'GET'])
 def template():
-    if request.method == 'POST':
-        return ("email: " + request.form['email'] + "<br> password: " + request.form['password'])
+    #need to get phone number, companyID. and Company token
+    if(request.method == 'POST'):
+        return ("clientID: " + request.form['email'] + "<br> phoneNumber: 123-456-7890 <br> companyToken: dshnvu9498hjs")
         
     return render_template('layout.html')
 
