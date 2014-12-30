@@ -4,11 +4,22 @@ import random
 import hashlib
 from twilio.rest import TwilioRestClient
 from pytwofaas import PyTwoFaas
+import pymssql
 
 
 account_sid = "AC2503925359b3b37abbeaaff6d87621f9"
 auth_token = "44363a15bca971ddba81edd23cd56ee9"
 twilio_num = "+18622775096"
+
+# engine = pymssql.connect("201.212.8.208:9000", "twofass", "jagns", "twofass")
+# cursor = engine.cursor()
+# cursor.execute('select * from users')
+# row = cursor.fetchone()
+# while row:
+#     print("ID=%d, Name=%s" % (row[0], row[2]))
+#     row = cursor.fetchone()
+
+# engine.close()
 
 app = Flask(__name__)
 
