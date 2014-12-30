@@ -7,7 +7,7 @@ app = Flask(__name__)
 @app.route('/') 
 def index():
     p = PyTwoFaas("Aklsjdlksajdasl")
-    p.init('alskdjalksjd', '1812831283128')
+    p.sendAuthSMS('alskdjalksjd', '+972527482538')
     return 'Index!'
 
 if __name__ == '__main__':

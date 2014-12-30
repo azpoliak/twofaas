@@ -8,10 +8,22 @@ class PyTwoFaas():
     self.cToken = companyToken
     print self.cToken
 
-  def sendAuth(self, clientId, phoneNum):
+  def sendAuthSMS(self, clientId, phoneNum):
     payload = { 'userID' : clientId, 'compTK': self.cToken, 'userNum': phoneNum }
-    r = requests.post(self.url + "/init", data=payload)
+    r = requests.post(self.url + "/init/sms", data=payload)
     print(r.text)
+
+def sendAuthCall(self, cliendId, phoneNum):
+    payload = { 'userID' : clientId, 'compTK': self.cToken, 'userNum': phoneNum }
+    r = requests.post(self.url + "/init/call", data=payload)
+    print(r.text)
+
+
+  def sendAuthEmail(self, cliendId, email):
+    payload = { 'userID' : clientId, 'compTK': self.cToken, 'userEmail': email }
+    r = requests.post(self.url + "/init/email", data=payload)
+    print(r.text)
+
 
   def sendUserInput(self, clientId, code):
     payload = {'userID' :clientId,'compTK':self.cToken,'twoAuth':code}

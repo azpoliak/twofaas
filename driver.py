@@ -22,12 +22,12 @@ def index():
 
 def sendsms(userPhNum, message):
     client = TwilioRestClient(account_sid, auth_token)
-    message = client.messages.create(to="+972527482538", from_=twilio_num, 
+    message = client.messages.create(to=userPhNum, from_=twilio_num, 
     body="Your authentication key is " + message)
     return userPhNum
 
 def sendToDB(compTK, userID, userNum, auth_key):
-    return auth_key
+    return "auth_key: " + auth_key + "\n phone number: " + userNum 
 
 def call(userPhNum):
     #need to get phone number and Company token and userID
@@ -38,8 +38,9 @@ def call(userPhNum):
     message = client.calls.create(to=userPhNum, from_=twilio_num, 
         url="http://twimlets.com/holdmusic?Bucket=com.twilio.music.ambient")      
 
+
 #this initializes the 2 factor process once company validates 1st auth 
-@app.route('/init', methods=['POST', 'GET'])
+@app.route('/init/<path>', methods=['POST', 'GET'])
 def init():
     #need to get phone number and Company token and userID
     #phone number, company token will be received as json
@@ -50,8 +51,10 @@ def init():
     userID = request.form['userID']
     userNum = request.form['userNum']
 
-    auth_key = rand()
-    sendsms(userNum, auth_key)
+    return path
+
+   # auth_key = rand()
+   # sendsms(userNum, auth_key)
     #call(userNum, auth_key)
     return sendToDB(compTK, userID, userNum, auth_key)
     #display 2nd fact input page
