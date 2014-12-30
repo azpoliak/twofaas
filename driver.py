@@ -93,10 +93,61 @@ def init(factor=None):
 def val():
     #gets the user id, phone number, and code and compares that to db
     userID = request.form['userID']
-    userNum = request.form['userNum']
-    inputCode = request.form['inputCode']
-    print "userID: " + userID + "\n number: " + userNum
-    return "userID: " + userID + "\n number: " + userNum
+    compTK = request.form['compTK']
+    inputCode = request.form['twoAuth']
+
+    e = pymssql.connect("201.212.8.208:9000", "twofass", "jagns", "twofass")
+    e.autocommit(True)
+    c = e.cursor()
+    ##insert query 
+    q = "SELECT userid FROM users WHERE CompanyId='%s' AND CompanyUserId='%s' AND Code='%s'" % (compTK, userID, inputCode)
+    ##select query
+    print q
+    c.execute(q)
+    row = c.fetchone()
+    count = 0;
+    while row:
+        count = count + 1;
+        row = c.fetchone()
+    success = 0;
+    if count is 1:
+        query = "update users set KeyId=NEWID() where CompanyId='%s' and CompanyUserId='%s' and Code='%s'" % (compTK, userID, inputCode)
+        c.execute(query)
+        success = c.rowcount
+    c.close()
+    e.close()
+
+    return "COMPLETE"
+
+@app.route('/valid', methods=['POST'])
+def isValid():
+    #gets the user id, phone number, and code and compares that to db
+    userID = request.form['userID']
+    compTK = request.form['compTK']
+
+    e = pymssql.connect("201.212.8.208:9000", "twofass", "jagns", "twofass")
+    e.autocommit(True)
+    c = e.cursor()
+    ##insert query 
+    q = "SELECT keyid FROM users WHERE CompanyId='%s' AND CompanyUserId='%s'" % (compTK, userID)
+    ##select query
+    print q
+    c.execute(q)
+    row = c.fetchone()
+    count = 0
+    success = 0
+    while row:
+        if row is not None:
+            success = 1
+        count = count + 1
+        row = c.fetchone()
+    if count > 1:
+        success = 0
+        
+    c.close()
+    e.close()
+
+    print success
 
 
 if __name__ == '__main__':

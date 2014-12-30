@@ -29,3 +29,13 @@ class PyTwoFaas():
     payload = {'userID' :clientId,'compTK':self.cToken,'twoAuth':code}
     r = requests.post(self.url + "/validate", data=payload)
     print(r.text)
+
+  def isAuthenticatedUser(self, clientId):
+    payload = { 'userID': clientId, 'compTK':self.cToken}
+    r = requests.post(self.url + "/valid", data=payload)
+    print(r.text)
+
+p = PyTwoFaas("6D6997D5-AC88-4747-847B-C5BB3AB047A9")
+print p.isAuthenticatedUser('gil.chenzion@aqw.com')
+#+19736504192
+#+972527482538
