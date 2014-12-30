@@ -7,6 +7,17 @@ app = Flask(__name__)
 def index():
     return 'Index!'
 
+@app.route('/template', methods=['POST', 'GET'])
+def template():
+    if request.method == 'POST':
+        return (request)
+        
+    return render_template('layout.html')
+
+@app.route('/admin')
+def admin():
+    return 'Admin'
+
 @app.route('/firstlogInDone')
 def auth():
     #gets phone number, and the auth token set my sys admin and sends code to user. 
@@ -27,4 +38,5 @@ def two_factor():
     return app.send_static_file('twofac.html')
 
 if __name__ == '__main__':
+    app.debug = True
     app.run()
