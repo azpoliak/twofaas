@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 from flask import render_template
 from twilio.rest import TwilioRestClient
 
+account_sid = "AC2503925359b3b37abbeaaff6d87621f9"
+auth_token = "44363a15bca971ddba81edd23cd56ee9"
 
 app = Flask(__name__)
 
@@ -9,29 +11,42 @@ app = Flask(__name__)
 def index():
     return 'Index!'
 
-def sendsms():
+def sendsms(userPhNum):
     account_sid = "AC2503925359b3b37abbeaaff6d87621f9"
     auth_token = "44363a15bca971ddba81edd23cd56ee9"
     client = TwilioRestClient(account_sid, auth_token)
-    message = client.messages.create(to="+19736504192", from_="+18622775096", body="twofass")
+    message = client.messages.create(to=userPhNum, from_="+18622775096", body="twofass")
 
+def sendToDB(compTK, userID, userNum):
+    return "send to DB"
 
-#this initializes the 2 factor process once company validates 1st auth 
-@app.route('/init', methods=['POST', 'GET'])
-def template():
+def call():
     #need to get phone number and Company token and userID
     #phone number, company token will be received as json
     #parses the json and sends to database and user's phone
-    json = request.json
-    print(json)
 
-    
-    #sendsms()
-    #sendToDB()
+    client = TwilioRestClient(account_sid, auth_token)
+    message = client.calls.create(to="+19736504192", from_="+18622775096", 
+        url="http://twimlets.com/holdmusic?Bucket=com.twilio.music.ambient")      
+
+#this initializes the 2 factor process once company validates 1st auth 
+@app.route('/init', methods=['POST', 'GET'])
+def init():
+    #need to get phone number and Company token and userID
+    #phone number, company token will be received as json
+    #parses the json and sends to database and user's phone
+    #json = request.json
+    #print(json)
+    compTK = request.form['compTK']
+    userID = request.form['userID']
+    userNum = request.form['userNum']
+
+
+    #sendsms(userNum)
+    return sendToDB(compTK, userID, userNum)
     #display 2nd fact input page
 
-    return jsonify(json)
-
+    #return jsonify(request)
 
 @app.route('/admin')
 def admin():
