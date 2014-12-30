@@ -72,28 +72,14 @@ def init():
 
     #return jsonify(request)
 
-@app.route('/admin')
-def admin():
-    return 'Admin'
-
-@app.route('/firstlogInDone')
-def auth():
-    #gets phone number, and the auth token set my sys admin and sends code to user. 
-    #write the user code, phone number, and user id to db 
-    return 'Authorize'
-
-@app.route('/validate')
+@app.route('/validate', methods=['POST'])
 def val():
     #gets the user id, phone number, and code and compares that to db
-    return 'Validate'
+    userID = request.form['userID']
+    userNum = request.form['userNum']
+    print "userID: " + userID + "\n number: " + userNum
+    return "userID: " + userID + "\n number: " + userNum
 
-@app.route('/login', methods=['POST', 'GET'])
-def log_in():
-    return app.send_static_file('login.html')
-
-@app.route('/two_factor')
-def two_factor():
-    return app.send_static_file('twofac.html')
 
 if __name__ == '__main__':
     app.debug = True
