@@ -12,10 +12,11 @@ def index():
     return 'Index!'
 
 def sendsms(userPhNum):
-    account_sid = "AC2503925359b3b37abbeaaff6d87621f9"
-    auth_token = "44363a15bca971ddba81edd23cd56ee9"
-    client = TwilioRestClient(account_sid, auth_token)
-    message = client.messages.create(to=userPhNum, from_="+18622775096", body="twofass")
+    #account_sid = "AC2503925359b3b37abbeaaff6d87621f9"
+    #auth_token = "44363a15bca971ddba81edd23cd56ee9"
+    #client = TwilioRestClient(account_sid, auth_token)
+    #message = client.messages.create(to=userPhNum, from_="+18622775096", body="twofass")
+    return userPhNum
 
 def sendToDB(compTK, userID, userNum):
     return "send to DB"
@@ -42,7 +43,7 @@ def init():
     userNum = request.form['userNum']
 
 
-    #sendsms(userNum)
+    sendsms(userNum)
     return sendToDB(compTK, userID, userNum)
     #display 2nd fact input page
 
