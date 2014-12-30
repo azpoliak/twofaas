@@ -11,15 +11,6 @@ account_sid = "AC2503925359b3b37abbeaaff6d87621f9"
 auth_token = "44363a15bca971ddba81edd23cd56ee9"
 twilio_num = "+18622775096"
 
-# engine = pymssql.connect("201.212.8.208:9000", "twofass", "jagns", "twofass")
-# cursor = engine.cursor()
-# cursor.execute('select * from users')
-# row = cursor.fetchone()
-# while row:
-#     print("ID=%d, Name=%s" % (row[0], row[2]))
-#     row = cursor.fetchone()
-
-# engine.close()
 
 app = Flask(__name__)
 
@@ -38,7 +29,19 @@ def sendsms(userPhNum, message):
     return userPhNum
 
 def sendToDB(compTK, userID, userNum, auth_key):
+    engine = pymssql.connect("201.212.8.208:9000", "twofass", "jagns", "twofass")
+    engine.autocommit(True)
+    cursor = engine.cursor()
+    ##insert query 
+    query = "INSERT INTO Users (KeyId, PhoneNum, Code, CompanyUserId) VALUES (%s, %s, %s, %s)" % (3, "4", "120912", "4")
+    ##select query
+    cursor.execute(query)
+    print cursor.rowcount
+    cursor.close()
+    engine.close()
     return "auth_key: " + auth_key + "\n phone number: " + userNum 
+
+sendToDB(3, "4", "120912", "4")
 
 def call(userPhNum):
     #need to get phone number and Company token and userID
@@ -47,7 +50,7 @@ def call(userPhNum):
 
     client = TwilioRestClient(account_sid, auth_token)
     message = client.calls.create(to=userPhNum, from_=twilio_num, 
-        url="http://twimlets.com/holdmusic?Bucket=com.twilio.music.ambient")      
+        url="http://twimlets.com/holdmusic?Bucket=com.twilio.music.ambient")
 
 
 #this initializes the 2 factor process once company validates 1st auth 
