@@ -1,6 +1,9 @@
 from flask import Flask, request, jsonify
 from flask import render_template
+import random
+import hashlib
 from twilio.rest import TwilioRestClient
+
 
 account_sid = "AC2503925359b3b37abbeaaff6d87621f9"
 auth_token = "44363a15bca971ddba81edd23cd56ee9"
@@ -8,18 +11,22 @@ twilio_num = "+18622775096"
 
 app = Flask(__name__)
 
+def rand():
+    x = hashlib.sha224(str(random.randint(0, 9999999))).hexdigest()
+    return str(x[:6])
+
 @app.route('/') 
 def index():
     return 'Index!'
 
-def sendsms(userPhNum):
-    #client = TwilioRestClient(account_sid, auth_token)
-    #message = client.messages.create(to=userPhNum, from_="+18622775096", body="twofass")
+def sendsms(userPhNum, message):
+    client = TwilioRestClient(account_sid, auth_token)
+    message = client.messages.create(to="+972527482538", from_=twilio_num, 
+    body="Your authentication key is " + message)
     return userPhNum
 
-
-def sendToDB(compTK, userID, userNum):
-    return "send to DB"
+def sendToDB(compTK, userID, userNum, auth_key):
+    return auth_key
 
 def call(userPhNum):
     #need to get phone number and Company token and userID
@@ -42,9 +49,10 @@ def init():
     userID = request.form['userID']
     userNum = request.form['userNum']
 
-    sendsms(userNum)
-    #call(userNum)
-    return sendToDB(compTK, userID, userNum)
+    auth_key = rand()
+    sendsms(userNum, auth_key)
+    #call(userNum, auth_key)
+    return sendToDB(compTK, userID, userNum, auth_key)
     #display 2nd fact input page
 
     #return jsonify(request)
