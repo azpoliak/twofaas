@@ -1,0 +1,4 @@
+plugins/pytwofaas/build
+plugins/pytwofaas/dist
+plugins/pytwofaas/pytwofaas.egg-info
+plugins/pytwofaas/pytwofaas/__init__.pyc
