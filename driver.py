@@ -4,6 +4,7 @@ from twilio.rest import TwilioRestClient
 
 account_sid = "AC2503925359b3b37abbeaaff6d87621f9"
 auth_token = "44363a15bca971ddba81edd23cd56ee9"
+twilio_num = "+18622775096"
 
 app = Flask(__name__)
 
@@ -12,21 +13,19 @@ def index():
     return 'Index!'
 
 def sendsms(userPhNum):
-    account_sid = "AC2503925359b3b37abbeaaff6d87621f9"
-    auth_token = "44363a15bca971ddba81edd23cd56ee9"
     client = TwilioRestClient(account_sid, auth_token)
-    message = client.messages.create(to=userPhNum, from_="+18622775096", body="twofass")
+    message = client.messages.create(to=userPhNum, from=twilio_num, body="twofass")
 
 def sendToDB(compTK, userID, userNum):
     return "send to DB"
 
-def call():
+def call(userPhNum):
     #need to get phone number and Company token and userID
     #phone number, company token will be received as json
     #parses the json and sends to database and user's phone
 
     client = TwilioRestClient(account_sid, auth_token)
-    message = client.calls.create(to="+19736504192", from_="+18622775096", 
+    message = client.calls.create(to=userPhNum, from=twilio_num, 
         url="http://twimlets.com/holdmusic?Bucket=com.twilio.music.ambient")      
 
 #this initializes the 2 factor process once company validates 1st auth 
@@ -43,6 +42,7 @@ def init():
 
 
     #sendsms(userNum)
+    #call(userNum)
     return sendToDB(compTK, userID, userNum)
     #display 2nd fact input page
 
