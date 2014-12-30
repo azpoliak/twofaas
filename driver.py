@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask import render_template
 from twilio.rest import TwilioRestClient
+from pytwofaas import PyTwoFaas
 
 account_sid = "AC2503925359b3b37abbeaaff6d87621f9"
 auth_token = "44363a15bca971ddba81edd23cd56ee9"
@@ -64,7 +65,7 @@ def val():
     #gets the user id, phone number, and code and compares that to db
     return 'Validate'
 
-@app.route('/login')
+@app.route('/login', methods=['POST', 'GET'])
 def log_in():
     return app.send_static_file('login.html')
 

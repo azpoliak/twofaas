@@ -1,15 +1,19 @@
 import requests
 
-class PyTwoFaas(companyToken):
+class PyTwoFaas():
 
-	url = "http://127.0.0.1:5000"
+  url = "http://127.0.0.1:5000"
 
-	def init(clientId, phoneNum):
-    	payload = { 'userID' : clientId, 'compTK': companyToken, 'userNum': phoneNum }
-    	r = requests.post(url + "/init", data=payload)
-    	print(r.text)
+  def __init__(self, companyToken):
+    self.cToken = companyToken
+    print self.cToken
 
-	def validate(clientId, code):
-		payload = { 'userID' : clientId, 'compTK': companyToken, 'twoAuth': code }
-		r = requests.post(url + "/validate", data=payload)
-    	print(r.text)
+  def sendAuth(self, clientId, phoneNum):
+    payload = { 'userID' : clientId, 'compTK': self.cToken, 'userNum': phoneNum }
+    r = requests.post(self.url + "/init", data=payload)
+    print(r.text)
+
+  def sendUserInput(self, clientId, code):
+    payload = {'userID' :clientId,'compTK':self.cToken,'twoAuth':code}
+    r = requests.post(self.url + "/validate", data=payload)
+    print(r.text)
