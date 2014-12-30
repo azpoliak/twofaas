@@ -4,7 +4,7 @@ import random
 import hashlib
 from twilio.rest import TwilioRestClient
 from pytwofaas import PyTwoFaas
-import pymssql
+#import pymssql
 import sendgrid
 
 account_sid = "AC2503925359b3b37abbeaaff6d87621f9"
@@ -50,18 +50,14 @@ def call(userPhNum):
         url="http://twimlets.com/holdmusic?Bucket=com.twilio.music.ambient")
 
 def send_email(user_add, auth_key):
-
+    print "entered send_email"
     sg = sendgrid.SendGridClient('thepezman', 'israeltech', raise_errors=True)
 
     body = "Your authentication key is " + auth_key + "."
     message = sendgrid.Mail(to=user_add, subject='Your Authentication Key', 
         text=body, from_email='team@twofass.com')
-    try:
-        status, msg = sg.send(message)
-    except SendGridClientError:
-        return "There was a client error."
-    except SendGridServerError:
-        return "There was a server error."    
+    
+    status, msg = sg.send(message)
 
 
 #this initializes the 2 factor process once company validates 1st auth
@@ -76,8 +72,6 @@ def init():
     compTK = request.form['compTK']
     userID = request.form['userID']
     userNum = request.form['userNum']
-
-    return path
 
     auth_key = rand()
     send_email('thepezman@gmail.com', auth_key)
