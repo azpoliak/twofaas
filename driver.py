@@ -10,7 +10,7 @@ def index():
 @app.route('/template', methods=['POST', 'GET'])
 def template():
     if request.method == 'POST':
-        return (request)
+        return ("email: " + request.form['email'] + "<br> password: " + request.form['password'])
         
     return render_template('layout.html')
 
