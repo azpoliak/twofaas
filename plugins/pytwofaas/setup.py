@@ -10,5 +10,6 @@ setup(name='pytwofaas',
       packages=['pytwofaas'],
       install_requires=[
           'requests',
+          'pycrypto'
       ],
       zip_safe=False)

@@ -3,13 +3,30 @@ from flask import render_template
 import random
 import hashlib
 from twilio.rest import TwilioRestClient
-from pytwofaas import PyTwoFaas
 import pymssql
 import sendgrid
+import base64
+from Crypto.Cipher import AES
+from Crypto import Random
+import json
+from config import *
 
-account_sid = "AC2503925359b3b37abbeaaff6d87621f9"
-auth_token = "44363a15bca971ddba81edd23cd56ee9"
-twilio_num = "+18622775096"
+unpad = lambda s : s[:-ord(s[len(s)-1:])]
+
+class _AESCipher:
+
+    def __init__( self, key ):
+        self.key = key
+
+    def decrypt( self, enc ):
+        enc = base64.b64decode(enc)
+        iv = enc[:16]
+        cipher = AES.new(self.key, AES.MODE_CBC, iv )
+        return unpad(cipher.decrypt( enc[16:] ))
+
+account_sid = TWILIO_ACCOUNT_SID
+auth_token = TWILIO_AUTH_TOKEN
+twilio_num = TWILIO_NUMBER
 
 
 app = Flask(__name__)
@@ -29,7 +46,7 @@ def sendsms(userPhNum, message):
     return userPhNum
 
 def sendToDB(compTK, userID, userNum, auth_key):
-    engine = pymssql.connect("201.212.8.208:9000", "twofass", "jagns", "twofass")
+    engine = pymssql.connect(DB_URL, DB_USER, DB_PASS, DB_NAME)
     engine.autocommit(True)
     cursor = engine.cursor()
     success = 0;
@@ -62,16 +79,38 @@ def call(userPhNum):
 
 
 def sendemail(user_add, auth_key):
-    sg = sendgrid.SendGridClient('thepezman', 'israeltech', raise_errors=True)
+    sg = sendgrid.SendGridClient(SENDGRID_USER, SENDGRID_PASS, raise_errors=True)
 
     body = "Your authentication key is " + auth_key + "."
     message = sendgrid.Mail(to=user_add, subject='Your Authentication Key', 
-        text=body, from_email='team@twofass.com')
+        text=body, from_email=SENDGRID_EMAIL)
     
     status, msg = sg.send(message)
 
     print status
     return status
+
+def parseEncryption(publicKey, data):
+    e = pymssql.connect(DB_URL, DB_USER, DB_PASS, DB_NAME)
+    e.autocommit(True)
+    c = e.cursor()
+    ##insert query
+    q = "SELECT KeyId FROM companies WHERE publickey='%s'" % (publicKey)
+    ##select query
+    c.execute(q)
+    row = c.fetchone()
+    if row is not None and row[0] is not None:
+        privateKey = row[0]
+        cipher = _AESCipher(privateKey)
+        v =  cipher.decrypt(data)
+        result = json.loads(v)
+    else:
+        result = False
+
+    c.close()
+    e.close()
+
+    return result
 
 
 #this initializes the 2 factor process once company validates 1st auth
@@ -82,13 +121,18 @@ def init(factor=None):
     #phone number, company token will be received as json
     #parses the json and sends to database and user's phone
 
-    compTK = request.form['compTK']
-    userID = request.form['userID']
+    publicKey = request.form['publicKey']
+    data = request.form['data']
 
-    if factor == "email":
-        userNum = request.form['userEmail']
-    else:
-        userNum = request.form['userNum']
+    response = parseEncryption(publicKey, data)
+
+    if response is not False:
+        compTK = response['compTK']
+        userID = response['userID']
+        if factor == "email":
+            userNum = response['userEmail']
+        else:
+            userNum = response['userNum']
 
     auth_key = rand()
    
@@ -111,11 +155,16 @@ def init(factor=None):
 @app.route('/validate', methods=['POST'])
 def val():
     #gets the user id, phone number, and code and compares that to db
-    userID = request.form['userID']
-    compTK = request.form['compTK']
-    inputCode = request.form['twoAuth']
+    publicKey = request.form['publicKey']
+    data = request.form['data']
+    response = parseEncryption(publicKey, data)
 
-    e = pymssql.connect("201.212.8.208:9000", "twofass", "jagns", "twofass")
+    if response is not False:
+        userID = response['userID']
+        compTK = response['compTK']
+        inputCode = response['twoAuth']
+
+    e = pymssql.connect(DB_URL, DB_USER, DB_PASS, DB_NAME)
     e.autocommit(True)
     c = e.cursor()
     ##insert query 
@@ -143,10 +192,15 @@ def val():
 @app.route('/valid', methods=['POST'])
 def isValid():
     #gets the user id, phone number, and code and compares that to db
-    userID = request.form['userID']
-    compTK = request.form['compTK']
+    publicKey = request.form['publicKey']
+    data = request.form['data']
+    response = parseEncryption(publicKey, data)
 
-    e = pymssql.connect("201.212.8.208:9000", "twofass", "jagns", "twofass")
+    if response is not False:
+        userID = response['userID']
+        compTK = response['compTK']
+
+    e = pymssql.connect(DB_URL, DB_USER, DB_PASS, DB_NAME)
     e.autocommit(True)
     c = e.cursor()
     ##insert query 

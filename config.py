@@ -1,0 +1,11 @@
+TWILIO_ACCOUNT_SID = "AC2503925359b3b37abbeaaff6d87621f9"
+TWILIO_AUTH_TOKEN = "44363a15bca971ddba81edd23cd56ee9"
+TWILIO_NUMBER = "+18622775096"
+DB_URL = "201.212.8.208:9000"
+DB_USER = "twofass"
+DB_PASS = "jagns"
+DB_NAME = "twofass"
+SENDGRID_USER = "thepezman"
+SENDGRID_PASS = "israeltech"
+SENDGRID_EMAIL = "team@twofass.com"
+
