@@ -38,8 +38,8 @@ def rand():
 
 @app.route('/') 
 def index():
-    #return 'Welcome to the TwoFaas API! Two Factor Authentication in 2 minutes'
-    return app.send_static_url(demo/Extant/index.html)
+    return 'Welcome to the TwoFaas API! Two Factor Authentication in 2 minutes'
+    #return app.send_static_url(demo/Extant/index.html)
 
 def sendsms(userPhNum, message):
     client = TwilioRestClient(account_sid, auth_token)
