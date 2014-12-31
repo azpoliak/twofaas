@@ -27,7 +27,7 @@ class _AESCipher:
 
 class PyTwoFaas():
 
-  url = "http://127.0.0.1:5000"
+  url = "https://stormy-fortress-4823.herokuapp.com"
 
   def __init__(self, companyToken, publicKey):
     self.cToken = companyToken
@@ -51,14 +51,15 @@ class PyTwoFaas():
     r = requests.post(self.url + "/init/" + authType, data=data)
     return r.json()
 
+
   def sendAuthSMS(self, clientId, phoneNum):
-    self.sendAuth(clientId, phoneNum, "sms")
+    return self.sendAuth(clientId, phoneNum, "sms")
 
   def sendAuthCall(self, clientId, phoneNum):
-    self.sendAuth(clientId, phoneNum, "call")
+    return self.sendAuth(clientId, phoneNum, "call")
 
   def sendAuthEmail(self, clientId, email):
-    self.sendAuth(clientId, email, "email")
+    return self.sendAuth(clientId, email, "email")
 
   def sendUserInput(self, clientId, code):
     payload = {'userID' :clientId,'compTK':self.cToken,'twoAuth':code}
