@@ -1,1 +1,1 @@
-web: python driver.py ${PORT}
+worker: python driver.py ${PORT}
