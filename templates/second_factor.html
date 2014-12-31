@@ -1,0 +1,23 @@
+<!doctype html>
+<title>Log In</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<div class=page>
+<form name="first-log_in" method="POST" action="/validate">
+  <h1>Employer Log in</h1>
+  <div class="inset">
+  <p>
+    <label for="2fact">HI! ENTER IN TEXT</label>
+    <input type="text" name="2fact" id="2fact">
+    <input type="hidden" name="username" id="username" value="{{ username }}">
+  </p>
+  <p class="p-container">
+    <span>Send Again</span>
+    <input type="submit"  name="go" id="go" value="Validate">
+  </p>
+  </div>
+</form>
+
+</body>
+</html>
+~            
+</div>
