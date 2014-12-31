@@ -1,7 +1,7 @@
 Metadata-Version: 1.0
 Name: pytwofaas
-Version: 0.13
-Summary: Two Factor Authentication in Two Seconds
+Version: 0.14
+Summary: Two Factor Authentication in Two Minutes
 Home-page: https://github.com/azpoliak/twofaas
 Author: Gil Chen-Zion
 Author-email: gil.chenzion@gmail.com

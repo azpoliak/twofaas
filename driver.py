@@ -20,10 +20,9 @@ def rand():
 
 @app.route('/') 
 def index():
-    return 'Index!'
+    return 'Welcome to the TwoFaas API! Two Factor Authentication in 2 minutes'
 
 def sendsms(userPhNum, message):
-    print "It gets here"
     client = TwilioRestClient(account_sid, auth_token)
     message = client.messages.create(to=userPhNum, from_=twilio_num, 
     body="Your authentication key is " + message)
@@ -33,11 +32,19 @@ def sendToDB(compTK, userID, userNum, auth_key):
     engine = pymssql.connect("201.212.8.208:9000", "twofass", "jagns", "twofass")
     engine.autocommit(True)
     cursor = engine.cursor()
-    ##insert query 
-    query = "INSERT INTO Users (CompanyId, PhoneNum, Code, CompanyUserId) VALUES ('%s', '%s', '%s', '%s')" % (compTK, userNum, auth_key, userID)
-    ##select query
-    cursor.execute(query)
-    success = cursor.rowcount
+    success = 0;
+    q = "UPDATE Users SET Code='%s' WHERE CompanyId='%s' AND PhoneNum='%s' AND CompanyUserId='%s'" % (auth_key, compTK, userNum, userID)
+    print q
+    cursor.execute(q)
+    print cursor.rowcount
+    if cursor.rowcount == 0:
+        ##insert query 
+        query = "INSERT INTO Users (CompanyId, PhoneNum, Code, CompanyUserId) VALUES ('%s', '%s', '%s', '%s')" % (compTK, userNum, auth_key, userID)
+        ##select query
+        cursor.execute(query)
+        success = cursor.rowcount
+    else:
+        success = cursor.rowcount;
     cursor.close()
     engine.close()
 
@@ -54,8 +61,7 @@ def call(userPhNum):
         url="http://twimlets.com/holdmusic?Bucket=com.twilio.music.ambient")
 
 
-def send_email(user_add, auth_key):
-    print "entered send_email"
+def sendemail(user_add, auth_key):
     sg = sendgrid.SendGridClient('thepezman', 'israeltech', raise_errors=True)
 
     body = "Your authentication key is " + auth_key + "."
@@ -63,6 +69,9 @@ def send_email(user_add, auth_key):
         text=body, from_email='team@twofass.com')
     
     status, msg = sg.send(message)
+
+    print status
+    return status
 
 
 #this initializes the 2 factor process once company validates 1st auth
@@ -72,11 +81,14 @@ def init(factor=None):
     #need to get phone number and Company token and userID
     #phone number, company token will be received as json
     #parses the json and sends to database and user's phone
-    #json = request.json
-    #print(json)
+
     compTK = request.form['compTK']
     userID = request.form['userID']
-    userNum = request.form['userNum']
+
+    if factor == "email":
+        userNum = request.form['userEmail']
+    else:
+        userNum = request.form['userNum']
 
     auth_key = rand()
    
@@ -84,9 +96,16 @@ def init(factor=None):
 
     if success is 1:
         if factor == "sms":
-            return sendsms(userNum, auth_key)
+            sendsms(userNum, auth_key)
+            return jsonify(success='true', message="Sent SMS to" + userNum)
         elif factor == "call":
-            return call(userNum)
+            call(userNum)
+            return jsonify(success='true', message="Sent Call to" + userNum)
+        elif factor == "email":
+            sendemail(userNum, auth_key)
+            return jsonify(success='true', message="Sent Email to" + userNum)
+    else:
+        return jsonify(success='false', message="Failed to Second Second Factor")
 
 
 @app.route('/validate', methods=['POST'])
@@ -102,7 +121,6 @@ def val():
     ##insert query 
     q = "SELECT userid FROM users WHERE CompanyId='%s' AND CompanyUserId='%s' AND Code='%s'" % (compTK, userID, inputCode)
     ##select query
-    print q
     c.execute(q)
     row = c.fetchone()
     count = 0;
@@ -117,7 +135,10 @@ def val():
     c.close()
     e.close()
 
-    return "COMPLETE"
+    if success:
+        return jsonify(success='true')
+    else:
+        return jsonify(success='false')
 
 @app.route('/valid', methods=['POST'])
 def isValid():
@@ -131,13 +152,12 @@ def isValid():
     ##insert query 
     q = "SELECT keyid FROM users WHERE CompanyId='%s' AND CompanyUserId='%s'" % (compTK, userID)
     ##select query
-    print q
     c.execute(q)
     row = c.fetchone()
     count = 0
     success = 0
     while row:
-        if row is not None:
+        if row is not None and row[0] is not None:
             success = 1
         count = count + 1
         row = c.fetchone()
@@ -146,8 +166,10 @@ def isValid():
         
     c.close()
     e.close()
-
-    print success
+    if success:
+        return jsonify(success='true')
+    else:
+        return jsonify(success='false')
 
 
 if __name__ == '__main__':

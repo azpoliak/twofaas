@@ -14,7 +14,7 @@ class PyTwoFaas():
     else:
       payload = { 'userID' : clientId, 'compTK': self.cToken, 'userEmail': factor }
     r = requests.post(self.url + "/init/" + authType, data=payload)
-    print(r.text)
+    return r.json()
 
   def sendAuthSMS(self, clientId, phoneNum):
     self.sendAuth(clientId, phoneNum, "sms")
@@ -23,19 +23,14 @@ class PyTwoFaas():
     self.sendAuth(clientId, phoneNum, "call")
 
   def sendAuthEmail(self, clientId, email):
-    self.sendAuth(clientId, phoneNum, "email")
+    self.sendAuth(clientId, email, "email")
 
   def sendUserInput(self, clientId, code):
     payload = {'userID' :clientId,'compTK':self.cToken,'twoAuth':code}
     r = requests.post(self.url + "/validate", data=payload)
-    print(r.text)
+    return r.json()
 
   def isAuthenticatedUser(self, clientId):
     payload = { 'userID': clientId, 'compTK':self.cToken}
     r = requests.post(self.url + "/valid", data=payload)
-    print(r.text)
-
-p = PyTwoFaas("6D6997D5-AC88-4747-847B-C5BB3AB047A9")
-print p.isAuthenticatedUser('gil.chenzion@aqw.com')
-#+19736504192
-#+972527482538
+    return r.json()
