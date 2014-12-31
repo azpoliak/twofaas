@@ -10,6 +10,7 @@ from Crypto.Cipher import AES
 from Crypto import Random
 import json
 from config import *
+import os
 
 unpad = lambda s : s[:-ord(s[len(s)-1:])]
 
@@ -227,5 +228,6 @@ def isValid():
 
 
 if __name__ == '__main__':
-    app.debug = True
-    app.run()
+    port = int(os.environ.get('PORT', 33507))
+    #app.debug = True
+    app.run(port=port)
